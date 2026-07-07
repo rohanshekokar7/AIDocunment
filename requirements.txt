@@ -1,0 +1,13 @@
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+python-multipart>=0.0.6
+pydantic-settings>=2.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.44.0
+qwen-vl-utils>=0.0.1
+accelerate>=0.26.0
+Pillow>=10.0.0
+pdf2image>=1.16.3
+pytest>=7.4.0
+httpx>=0.24.1
