@@ -8,8 +8,7 @@ class PaddleOCREngine(OCREngine):
     def __init__(self):
         self.engine = PaddleOCR(
             use_angle_cls=False,
-            lang=settings.OCR_LANG,
-            use_mkldnn=False
+            lang=settings.OCR_LANG
         )
 
     def extract_text(self, page_data: PageData) -> PageData:
