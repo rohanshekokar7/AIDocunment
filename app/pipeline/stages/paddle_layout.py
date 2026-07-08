@@ -1,17 +1,31 @@
 import numpy as np
-from paddleocr import PPStructure
+try:
+    from paddleocr import PPStructure
+    LAYOUT_CLASS = PPStructure
+    KWARGS = {"show_log": False, "use_mkldnn": False, "recovery": False}
+except ImportError:
+    from paddleocr import PPStructureV3
+    LAYOUT_CLASS = PPStructureV3
+    KWARGS = {
+        "use_doc_orientation_classify": False,
+        "use_textline_orientation": False,
+        "use_seal_recognition": False,
+        "use_formula_recognition": False,
+        "use_chart_recognition": False,
+        "use_table_recognition": False,
+        "use_doc_unwarping": False
+    }
+
 from app.pipeline.interfaces.layout_engine import LayoutEngine
 from app.pipeline.models import PageData, LayoutRegion
 from app.core.config import settings
 
 class PaddleLayoutEngine(LayoutEngine):
     def __init__(self):
-        # We initialize PPStructure for layout detection. 
-        self.engine = PPStructure(
+        # Dynamically initialize based on paddleocr version
+        self.engine = LAYOUT_CLASS(
             lang=settings.OCR_LANG,
-            show_log=False,
-            use_mkldnn=False,
-            recovery=False
+            **KWARGS
         )
 
     def detect_layout(self, page_data: PageData) -> PageData:

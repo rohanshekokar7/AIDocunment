@@ -6,12 +6,23 @@ from app.core.config import settings
 
 class PaddleOCREngine(OCREngine):
     def __init__(self):
-        self.engine = PaddleOCR(
-            use_angle_cls=False,
-            lang=settings.OCR_LANG,
-            show_log=False,
-            use_mkldnn=False
-        )
+        import paddleocr
+        # paddleocr.__version__ is not always reliable, checking for PPStructureV3 instead as a proxy for v2.8+
+        try:
+            from paddleocr import PPStructureV3
+            # v2.8+ does not accept use_mkldnn
+            self.engine = PaddleOCR(
+                use_angle_cls=False,
+                lang=settings.OCR_LANG
+            )
+        except ImportError:
+            # v2.7
+            self.engine = PaddleOCR(
+                use_angle_cls=False,
+                lang=settings.OCR_LANG,
+                show_log=False,
+                use_mkldnn=False
+            )
 
     def extract_text(self, page_data: PageData) -> PageData:
         img_np = np.array(page_data.image.convert('RGB'))
