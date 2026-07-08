@@ -13,7 +13,9 @@ USER user
 
 # Define environment variables
 ENV HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH \
+    FLAGS_use_mkldnn=0 \
+    FLAGS_enable_pir_api=0
 
 WORKDIR $HOME/app
 
