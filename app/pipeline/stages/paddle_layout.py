@@ -15,7 +15,8 @@ class PaddleLayoutEngine(LayoutEngine):
             use_formula_recognition=False,
             use_chart_recognition=False,
             use_table_recognition=False,
-            use_doc_unwarping=False
+            use_doc_unwarping=False,
+            use_mkldnn=False
         )
 
     def detect_layout(self, page_data: PageData) -> PageData:
