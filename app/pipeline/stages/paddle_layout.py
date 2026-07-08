@@ -19,7 +19,28 @@ class PaddleLayoutEngine(LayoutEngine):
         )
 
     def detect_layout(self, page_data: PageData) -> PageData:
-        # BYPASS: Layout detection on MacOS (MPS) via background threads causes intermittent deadlocks 
-        # and hangs for complex documents like Resumes. 
-        # For document classification, OCR text is sufficient for the SLM.
+        # Convert PIL Image to BGR numpy array for PaddleOCR
+        img_np = np.array(page_data.image.convert('RGB'))
+        img_bgr = img_np[:, :, ::-1]
+        
+        try:
+            # Run layout detection
+            layout_results = self.engine(img_bgr)
+            
+            for region in layout_results:
+                region_type = region.get('type', 'unknown')
+                bbox = region.get('bbox', [])
+                
+                # Ensure bbox is a list of ints [x1, y1, x2, y2]
+                flat_bbox = [int(coord) for coord in bbox] if bbox else []
+                
+                layout_region = LayoutRegion(
+                    region_type=region_type,
+                    bbox=flat_bbox
+                )
+                page_data.layout_regions.append(layout_region)
+        except Exception as e:
+            from app.core.logging import logger
+            logger.warning(f"Layout detection failed for page {page_data.page_number}: {e}")
+            
         return page_data
