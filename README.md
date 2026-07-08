@@ -1,3 +1,11 @@
+---
+title: AI Document Classifier
+emoji: 📄
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
 # AI Document Classification System
 
 A production-ready AI-powered Document Classification System built with **FastAPI**, **PaddleOCR**, and **Qwen2.5-1.5B** (Small Language Model).
