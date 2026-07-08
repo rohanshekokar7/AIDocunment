@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Document Classification</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=13">
 </head>
+
 <body>
     <div class="background-elements">
         <div class="blob blob-1"></div>
@@ -17,14 +19,17 @@
     <div class="container">
         <header>
             <h1>AI Document Classification</h1>
-            <p>Upload a document (PDF, PNG, JPG) to classify it instantly using our Vision-Language Model.</p>
+            <p>Upload a document (PDF, PNG, JPG) to classify it instantly using our<br><strong>OCR + Layout Detection + SLM</strong> pipeline.</p>
         </header>
 
         <main>
             <div class="upload-zone" id="upload-zone">
                 <div class="upload-content">
-                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                        </path>
                     </svg>
                     <h3>Drag & Drop your file here</h3>
                     <p>or click to browse</p>
@@ -39,13 +44,13 @@
 
             <div class="result-card hidden" id="result-card">
                 <h2>Analysis Result</h2>
-                
+
                 <div class="result-grid">
                     <div class="result-item">
                         <span class="label">Document Type</span>
                         <span class="value highlight" id="res-doc-type">-</span>
                     </div>
-                    
+
                     <div class="result-item">
                         <span class="label">Writing Type</span>
                         <span class="value" id="res-writing-type">-</span>
@@ -58,19 +63,21 @@
                         </div>
                         <span class="confidence-value" id="res-confidence-text">0%</span>
                     </div>
-                    
+
                     <div class="result-item">
                         <span class="label">Processing Time</span>
                         <span class="value" id="res-processing-time">-</span>
                     </div>
                 </div>
-                
+
                 <button class="reset-btn" id="reset-btn">Analyze Another Document</button>
             </div>
 
             <div class="error-card hidden" id="error-card">
-                <svg class="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <svg class="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <p id="error-message">An error occurred.</p>
                 <button class="reset-btn error-reset" id="error-reset-btn">Try Again</button>
@@ -80,4 +87,5 @@
 
     <script src="/static/script.js"></script>
 </body>
+
 </html>
