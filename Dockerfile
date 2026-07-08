@@ -1,8 +1,10 @@
 FROM python:3.10-slim
 
-# Install system dependencies, including poppler-utils for pdf2image
+# Install system dependencies, including poppler-utils for pdf2image and libGL for OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
     poppler-utils \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up a new user named "user" with user ID 1000 (required by Hugging Face Spaces)
