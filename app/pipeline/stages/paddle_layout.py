@@ -1,5 +1,5 @@
 import numpy as np
-from paddleocr import PPStructureV3
+from paddleocr import PPStructure
 from app.pipeline.interfaces.layout_engine import LayoutEngine
 from app.pipeline.models import PageData, LayoutRegion
 from app.core.config import settings
@@ -7,15 +7,11 @@ from app.core.config import settings
 class PaddleLayoutEngine(LayoutEngine):
     def __init__(self):
         # We initialize PPStructure for layout detection. 
-        self.engine = PPStructureV3(
+        self.engine = PPStructure(
             lang=settings.OCR_LANG,
-            use_doc_orientation_classify=False,
-            use_textline_orientation=False,
-            use_seal_recognition=False,
-            use_formula_recognition=False,
-            use_chart_recognition=False,
-            use_table_recognition=False,
-            use_doc_unwarping=False
+            show_log=False,
+            use_mkldnn=False,
+            recovery=False
         )
 
     def detect_layout(self, page_data: PageData) -> PageData:

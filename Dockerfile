@@ -15,7 +15,9 @@ USER user
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH \
     FLAGS_use_mkldnn=0 \
-    FLAGS_enable_pir_api=0
+    FLAGS_enable_pir_api=0 \
+    OMP_NUM_THREADS=1 \
+    FLAGS_allocator_strategy=naive_best_fit
 
 WORKDIR $HOME/app
 
