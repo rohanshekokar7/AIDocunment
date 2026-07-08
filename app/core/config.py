@@ -9,8 +9,9 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "AI Document Classification API"
     API_V1_STR: str = "/api/v1"
     
-    # Model configuration
-    MODEL_NAME: str = "Qwen/Qwen2.5-VL-3B-Instruct"
+    # AI configuration
+    SLM_MODEL_NAME: str = "Qwen/Qwen2.5-0.5B-Instruct"
+    OCR_LANG: str = "en"
     USE_GPU_IF_AVAILABLE: bool = True
     
     # File handling
@@ -19,6 +20,6 @@ class Settings(BaseSettings):
     ALLOWED_EXTENSIONS: List[str] = ["pdf", "jpg", "jpeg", "png"]
     
     # Pydantic v2 specific configuration for env files
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 settings = Settings()

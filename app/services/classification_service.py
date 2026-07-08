@@ -1,41 +1,50 @@
 import time
-import json
 import os
+import traceback
 from fastapi import UploadFile, HTTPException
 from typing import List
 
 from app.core.logging import logger
 from app.models.schemas import ClassificationResponse, BatchClassificationResponse
 from app.utils.file_utils import save_upload_file_tmp
-from app.utils.image_utils import process_document
-from app.prompts.classification_prompt import CLASSIFICATION_PROMPT
-from app.services.model_service import model_service
 
-def parse_model_output(output_str: str) -> dict:
-    """
-    Parses the JSON string returned by the VLM.
-    Strips out markdown code blocks if the model wrapped it.
-    """
-    cleaned = output_str.strip()
-    if cleaned.startswith("```json"):
-        cleaned = cleaned[7:]
-    if cleaned.startswith("```"):
-        cleaned = cleaned[3:]
-    if cleaned.endswith("```"):
-        cleaned = cleaned[:-3]
-        
-    cleaned = cleaned.strip()
-    
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError as e:
-        logger.error(f"JSON Parse Error: {e}\nRaw output:\n{output_str}")
-        raise ValueError("Model did not return a valid JSON object.")
+# Pipeline imports
+from app.pipeline.stages.basic_validator import BasicValidator
+from app.pipeline.stages.preprocessing.advanced_preprocessor import AdvancedPreprocessor
+from app.pipeline.stages.preprocessing.orientation import OrientationFilter
+from app.pipeline.stages.preprocessing.deskew import DeskewFilter
+from app.pipeline.stages.preprocessing.resize import ResizeFilter
+from app.pipeline.stages.preprocessing.noise_removal import NoiseRemovalFilter
+from app.pipeline.stages.preprocessing.contrast import ContrastFilter
+from app.pipeline.stages.preprocessing.thresholding import ThresholdFilter
+from app.pipeline.stages.paddle_ocr import PaddleOCREngine
+from app.pipeline.stages.paddle_layout import PaddleLayoutEngine
+from app.pipeline.stages.json_aggregator import JSONAggregator
+from app.pipeline.stages.transformers_slm import TransformersSLMEngine
+from app.pipeline.stages.heuristic_confidence import HeuristicConfidenceEstimator
+from app.pipeline.orchestrator import PipelineOrchestrator
+
+# Initialize the pipeline orchestrator
+pipeline = PipelineOrchestrator(
+    validator=BasicValidator(),
+    preprocessor=AdvancedPreprocessor(filters=[
+        OrientationFilter(),
+        DeskewFilter(),
+        ResizeFilter(max_edge=1800),
+        NoiseRemovalFilter(),
+        ContrastFilter(),
+        ThresholdFilter()
+    ]),
+    ocr_engine=PaddleOCREngine(),
+    layout_engine=PaddleLayoutEngine(),
+    aggregator=JSONAggregator(),
+    slm_engine=TransformersSLMEngine(),
+    confidence_estimator=HeuristicConfidenceEstimator()
+)
 
 async def classify_document(upload_file: UploadFile, all_pages: bool = False) -> ClassificationResponse:
     """
-    Orchestrates the classification of a single document.
-    Saves to tmp -> Converts to images -> Infers -> Parses -> Cleans up.
+    Orchestrates the classification of a single document using the modular pipeline.
     """
     start_time = time.time()
     tmp_path = None
@@ -44,40 +53,33 @@ async def classify_document(upload_file: UploadFile, all_pages: bool = False) ->
         logger.info(f"Processing classification for file: {upload_file.filename}")
         tmp_path = save_upload_file_tmp(upload_file)
         
-        # Pre-process: PDF to Images or Image loading
-        images = process_document(tmp_path, process_all_pages=all_pages)
-        
-        # Inference
-        output_str = model_service.generate(images, CLASSIFICATION_PROMPT)
-        
-        # Parse JSON
-        parsed_data = parse_model_output(output_str)
+        import asyncio
+        # Execute the modular pipeline in a background thread so we don't block FastAPI's event loop
+        result = await asyncio.to_thread(pipeline.process, tmp_path, upload_file.filename, all_pages)
         
         processing_time = round(time.time() - start_time, 2)
         
         response = ClassificationResponse(
-            document_type=parsed_data.get("document_type", "Other / Unknown"),
-            writing_type=parsed_data.get("writing_type", "Unknown"),
-            confidence=float(parsed_data.get("confidence", 0.0)),
+            document_type=result.document_type,
+            writing_type=result.writing_type,
+            confidence=result.confidence,
             processing_time=processing_time
         )
         logger.info(f"Classified {upload_file.filename} as '{response.document_type}' (Confidence: {response.confidence}) in {processing_time}s")
         return response
         
     except HTTPException:
-        # Re-raise FastApi exceptions so they return correct status codes
         raise
     except ValueError as ve:
         logger.error(f"Value Error: {ve}")
-        raise HTTPException(status_code=500, detail=f"Model output format error: {str(ve)}")
+        raise HTTPException(status_code=500, detail=f"Pipeline error: {str(ve)}")
     except RuntimeError as re:
         logger.error(f"Runtime Error: {re}")
-        raise HTTPException(status_code=500, detail=f"Model inference failed: {str(re)}")
+        raise HTTPException(status_code=500, detail=f"Pipeline inference failed: {str(re)}")
     except Exception as e:
-        logger.error(f"Unhandled error classifying document: {str(e)}")
+        logger.error(f"Unhandled error classifying document: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail="Internal server error during classification")
     finally:
-        # Cleanup
         if tmp_path and os.path.exists(tmp_path):
             try:
                 os.remove(tmp_path)
@@ -86,8 +88,7 @@ async def classify_document(upload_file: UploadFile, all_pages: bool = False) ->
 
 async def batch_classify_documents(files: List[UploadFile], all_pages: bool = False) -> BatchClassificationResponse:
     """
-    Processes multiple documents sequentially to manage VRAM.
-    If one document fails, it returns an error result for that document rather than failing the batch.
+    Processes multiple documents sequentially.
     """
     start_time = time.time()
     results = []

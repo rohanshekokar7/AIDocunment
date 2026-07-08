@@ -7,11 +7,11 @@ from fastapi.staticfiles import StaticFiles
 from app.api.routes import router
 from app.core.config import settings
 from app.core.logging import logger
-from app.services.model_service import model_service
+from app.services.classification_service import pipeline
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="AI-powered Document Classification System using Qwen2.5-VL",
+    description="AI-powered Document Classification System using Modular OCR + SLM Pipeline",
     version="1.0.0"
 )
 
@@ -53,6 +53,6 @@ def read_root():
 def health_check():
     return {
         "status": "healthy",
-        "model_loaded": model_service.model is not None,
-        "device": getattr(model_service, "device", None)
+        "slm_loaded": pipeline.slm_engine.model is not None,
+        "device": getattr(pipeline.slm_engine, "device", None)
     }

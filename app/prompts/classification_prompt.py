@@ -8,11 +8,15 @@ DOCUMENT_CLASSES = [
 
 WRITING_TYPES = ["Printed", "Handwritten", "Mixed"]
 
-CLASSIFICATION_PROMPT = f"""You are an expert Document Classification AI.
-Analyze the provided document image(s) carefully and extract the following information.
+def build_classification_prompt(document_json_str: str) -> str:
+    return f"""You are an expert Document Classification AI.
+Analyze the provided structured OCR text and layout of the document and extract the following information.
+
+Document Content (JSON format with pages and text blocks):
+{document_json_str}
 
 1. document_type: Identify the document from this exact list: {', '.join(DOCUMENT_CLASSES)}. If it does not clearly match any, choose "Other / Unknown".
-2. writing_type: Determine if the text is entirely "Printed", entirely "Handwritten", or "Mixed" (contains both).
+2. writing_type: Determine if the text is entirely "Printed", entirely "Handwritten", or "Mixed" (contains both). Use OCR text patterns, noise, or document context to infer this.
 3. confidence: Estimate your confidence in this classification as a float between 0.0 and 1.0 (e.g., 0.95).
 
 You MUST return ONLY a valid JSON object. Do not include any markdown formatting, explanations, or code blocks. Just the raw JSON string.

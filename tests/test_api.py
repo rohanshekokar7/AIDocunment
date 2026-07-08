@@ -19,7 +19,7 @@ def test_health():
 @patch("app.services.classification_service.model_service.generate")
 @patch("app.services.classification_service.process_document")
 def test_classify_endpoint_mocked(mock_process, mock_generate):
-    # Mock pre-processing and model generation to avoid loading heavy VLM in tests
+    # Mock pre-processing and model generation to avoid loading heavy models in tests
     mock_process.return_value = [MagicMock()] # Mock PIL Image
     mock_generate.return_value = '{"document_type": "PAN Card", "writing_type": "Printed", "confidence": 0.98}'
     
