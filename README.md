@@ -10,80 +10,75 @@ pinned: false
 
 A production-ready AI-powered Document Classification System built with **FastAPI**, **PaddleOCR**, and **Qwen2.5-1.5B** (Small Language Model).
 
+🔥 **Live Demo:** [Try the deployed app on Hugging Face Spaces!](https://huggingface.co/spaces/rohanshekokar/ai-document-classifier)
+
+---
+
 ## Features
 
-- **Document Classification**: Classifies 20+ document types (Aadhaar, PAN, Invoices, etc.).
+- **Document Classification**: Classifies 19+ specific document types including Aadhaar, PAN, Passports, Bank Statements, Invoices, utility bills, and medical reports.
 - **Writing Type Detection**: Determines if the document is `Printed`, `Handwritten`, or `Mixed`.
-- **Confidence Scoring**: Self-evaluated model confidence for predictions.
+- **Confidence Scoring**: Blends SLM confidence with OCR extraction quality for highly reliable heuristics.
 - **Modular Pipeline**: Analyzes PDFs and Images directly using an 8-stage pipeline combining OCR, Layout Detection, and a Small Language Model.
-- **FastAPI**: Asynchronous, high-performance API with Swagger UI docs.
-- **Batch Processing**: Supports classifying multiple documents in one request.
+- **FastAPI**: Asynchronous, high-performance API with a beautiful web frontend and Swagger UI docs.
+- **Mobile-Friendly**: The web UI works perfectly on mobile browsers.
 
-## Architecture
+---
 
-```text
-project/
-├── app/
-│   ├── api/
-│   │   └── routes.py         # API endpoints
-│   ├── core/
-│   │   ├── config.py         # Pydantic settings
-│   │   └── logging.py        # Custom logger
-│   ├── models/
-│   │   └── schemas.py        # Request/Response schemas
-│   ├── prompts/
-│   │   ├── pipeline/         # Modular 8-stage OCR+SLM pipeline
-│   │   └── services/         # Orchestration services
-│   │   └── classification_service.py # Orchestrates preprocessing & parsing
-│   ├── utils/
-│   │   ├── file_utils.py     # File validation
-│   │   └── image_utils.py    # PDF to Image conversion
-│   ├── main.py               # FastAPI application
-├── tests/                    # Pytest unit & API tests
-├── Dockerfile                # Containerization
-├── docker-compose.yml        # Docker composition
-└── requirements.txt          # Python dependencies
-```
+## How to Run This Project Locally
 
-## Setup & Installation
+If you want to run this code on your own machine instead of using the live demo, follow these steps:
 
 ### Prerequisites
 
 - **Python 3.10+**
-- **Poppler**: Required for `pdf2image` to convert PDFs.
-  - Mac: `brew install poppler`
-  - Linux: `sudo apt-get install poppler-utils`
-- **GPU (Optional but recommended)**: CUDA or MPS compatible hardware.
+- **Poppler**: Required for converting PDFs to images.
+  - **Mac:** `brew install poppler`
+  - **Linux:** `sudo apt-get install poppler-utils`
+  - **Windows:** Download [Poppler for Windows](https://github.com/oschwartz10612/poppler-windows/releases/) and add it to your PATH.
 
-### Local Setup
+### Step-by-Step Setup
 
-1. Create a virtual environment and install dependencies:
+1. **Clone the repository and enter the directory:**
+   ```bash
+   git clone https://github.com/rohanshekokar7/AIDocunment.git
+   cd AIDocunment
+   ```
+
+2. **Create a virtual environment (Recommended):**
    ```bash
    python -m venv venv
-   source venv/bin/activate
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   ```
+
+3. **Install the required dependencies:**
+   ```bash
    pip install -r requirements.txt
    ```
-2. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-3. Run the application:
+
+4. **Run the FastAPI Server:**
    ```bash
    uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
    ```
 
-### Docker Setup
+5. **Open the App:**
+   - **Web UI:** Open your browser and go to [http://localhost:8000](http://localhost:8000)
+   - **Interactive API Docs:** Go to [http://localhost:8000/docs](http://localhost:8000/docs)
 
-To run using Docker (which handles Poppler automatically):
+---
+
+## Run with Docker (Easiest Method)
+
+If you don't want to manually install Poppler and Python dependencies, you can run the entire system inside an isolated Docker container:
 
 ```bash
 docker-compose up --build
 ```
-*(Note: To use GPU inside Docker, uncomment the `deploy` block in `docker-compose.yml` and ensure NVIDIA Container Toolkit is installed).*
+Once it finishes building, the app will be available at [http://localhost:8000](http://localhost:8000).
+
+---
 
 ## API Endpoints
-
-Once running, navigate to [http://localhost:8000/docs](http://localhost:8000/docs) for the interactive Swagger UI.
 
 ### `POST /api/v1/classify`
 Classifies a single document.
@@ -122,8 +117,23 @@ Classifies multiple documents.
 }
 ```
 
-## Future Improvements
+---
 
-- **Asynchronous Task Queue**: Integrate Celery + Redis for processing extremely large batch uploads in the background.
-- **Model Quantization**: Use AWQ or GPTQ versions of the SLM to drastically reduce VRAM usage.
-- **Extended Formats**: Add support for DOCX/XLSX by converting them to PDF first.
+## Architecture Overview
+
+```text
+project/
+├── app/
+│   ├── api/                  # API endpoints
+│   ├── core/                 # Settings and logging
+│   ├── models/               # Request/Response schemas
+│   ├── pipeline/             # Modular 8-stage OCR+SLM pipeline
+│   ├── prompts/              # SLM prompts and guidelines
+│   ├── services/             # Orchestration services
+│   ├── utils/                # File validation and image utils
+│   └── main.py               # FastAPI application entrypoint
+├── static/                   # Web UI HTML/CSS/JS
+├── Dockerfile                # Containerization
+├── docker-compose.yml        # Docker composition
+└── requirements.txt          # Pinned Python dependencies
+```
