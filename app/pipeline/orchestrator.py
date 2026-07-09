@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from typing import List, Dict, Any
 from app.pipeline.models import DocumentContext, PageData, ClassificationResult
 from app.pipeline.interfaces.validator import DocumentValidator

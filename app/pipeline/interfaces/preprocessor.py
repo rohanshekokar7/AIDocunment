@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from abc import ABC, abstractmethod
 from typing import List
 from PIL import Image

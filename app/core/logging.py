@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import logging
 import sys
 

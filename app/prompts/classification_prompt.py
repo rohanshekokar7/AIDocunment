@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 DOCUMENT_CLASSES = [
     "Aadhaar Card", "PAN Card", "Passport", "Bank Statement", "Passbook", 
     "Electricity Bill", "Water Bill", "Gas Bill", "Mobile Bill", "Invoice", 
@@ -9,8 +14,8 @@ DOCUMENT_CLASSES = [
 WRITING_TYPES = ["Printed", "Handwritten", "Mixed"]
 
 def build_classification_prompt(document_json_str: str) -> str:
-    return f"""You are an expert Document Classification AI.
-Analyze the provided structured OCR text and layout of the document and extract the following information.
+    return f"""### SYSTEM INSTRUCTION ###
+Analyze the provided structured OCR text and layout of the document and extract the classification data according to the schema below.
 
 Document Content (JSON format with pages and text blocks):
 {document_json_str}

@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import os
 import shutil
 from tempfile import NamedTemporaryFile

@@ -1,4 +1,10 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import os
+# Workaround: Disable PIR and MKLDNN to prevent PaddlePaddle 2.6.2 hardware crashes on shared CPU instances
 os.environ["FLAGS_enable_pir_api"] = "0"
 os.environ["FLAGS_use_mkldnn"] = "0"
 
@@ -34,9 +40,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up FastAPI application...")
-    # Optional: Load model asynchronously so the first request doesn't block indefinitely
-    # asyncio.create_task(asyncio.to_thread(model_service.load_model))
-    # For now, it will load lazily on the first request.
+    # TODO: Pre-warm the SLM in a background thread here if cold-starts become too slow
     pass
 
 @app.exception_handler(Exception)

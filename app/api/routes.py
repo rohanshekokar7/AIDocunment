@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from fastapi import APIRouter, File, UploadFile, Query
 from typing import List
 

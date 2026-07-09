@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from typing import List
 from PIL import Image
 from app.pipeline.interfaces.preprocessor import ImagePreprocessor

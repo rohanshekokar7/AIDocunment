@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional
 from PIL import Image

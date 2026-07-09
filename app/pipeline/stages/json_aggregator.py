@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import json
 from app.pipeline.interfaces.aggregator import FeatureAggregator
 from app.pipeline.models import DocumentContext

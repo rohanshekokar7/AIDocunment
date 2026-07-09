@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from pydantic import BaseModel, Field
 from typing import List, Optional
 

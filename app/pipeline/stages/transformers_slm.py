@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import torch
 import json
 from transformers import AutoModelForCausalLM, AutoTokenizer

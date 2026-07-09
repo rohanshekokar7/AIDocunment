@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from app.pipeline.interfaces.confidence_estimator import ConfidenceEstimator
 
 class HeuristicConfidenceEstimator(ConfidenceEstimator):

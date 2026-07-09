@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from pdf2image import convert_from_path
 from PIL import Image, ImageOps
 import os

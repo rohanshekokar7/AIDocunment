@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 from abc import ABC, abstractmethod
 
 class ConfidenceEstimator(ABC):

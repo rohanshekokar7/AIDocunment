@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import cv2
 import numpy as np
 from app.pipeline.stages.preprocessing.filters import ImageFilter

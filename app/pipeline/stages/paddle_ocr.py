@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import numpy as np
 from paddleocr import PaddleOCR
 from app.pipeline.interfaces.ocr_engine import OCREngine

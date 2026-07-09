@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import pytest
 from fastapi import HTTPException
 from app.utils.file_utils import validate_file_extension

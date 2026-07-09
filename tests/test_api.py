@@ -1,3 +1,8 @@
+"""
+AI Document Classification System
+Developed by Rohan Shekokar
+"""
+
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
