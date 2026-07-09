@@ -1,11 +1,11 @@
 :root {
     --bg-color: #f8fafc;
     --text-color: #1e293b;
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --card-bg: rgba(255, 255, 255, 0.85);
+    --primary-color: #9333ea;
+    --primary-hover: #7e22ce;
+    --card-bg: rgba(255, 255, 255, 0.95);
     --border-color: rgba(148, 163, 184, 0.3);
-    --success-color: #059669;
+    --success-color: #ec4899;
     --error-color: #dc2626;
 }
 
@@ -219,10 +219,17 @@ header p {
 .result-item {
     display: flex;
     flex-direction: column;
-    background: rgba(241, 245, 249, 0.8);
-    padding: 1rem;
+    background: rgba(248, 250, 252, 0.9);
+    padding: 1.25rem;
     border-radius: 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(147, 51, 234, 0.1);
+    transition: all 0.3s ease;
+}
+
+.result-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.3);
 }
 
 .result-item.full-width {
@@ -243,7 +250,10 @@ header p {
 }
 
 .value.highlight {
-    color: #a5b4fc;
+    background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
 }
 
 .progress-bar-container {
@@ -257,7 +267,7 @@ header p {
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #6366f1, #10b981);
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
     width: 0%;
     transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
