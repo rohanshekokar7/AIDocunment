@@ -10,7 +10,7 @@ pinned: false
 
 A production-ready AI-powered Document Classification System built with **FastAPI**, **PaddleOCR**, and **Qwen2.5-1.5B** (Small Language Model).
 
-🔥 **Live Demo:** [Try the deployed app on Hugging Face Spaces!](https://huggingface.co/spaces/rohanshekokar/ai-document-classifier)
+🔥 **Live Demo:** https://huggingface.co/spaces/rohanshekokar/ai-document-classifier
 
 ---
 
