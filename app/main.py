@@ -13,6 +13,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 from app.api.routes import router
 from app.core.config import settings
@@ -35,7 +38,7 @@ app.add_middleware(
 )
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
 @app.on_event("startup")
 async def startup_event():
@@ -55,7 +58,7 @@ app.include_router(router, prefix=settings.API_V1_STR)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
-    return FileResponse("static/index.html")
+    return FileResponse(str(BASE_DIR / "static" / "index.html"))
 
 @app.get("/health")
 def health_check():

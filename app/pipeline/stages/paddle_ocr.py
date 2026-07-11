@@ -18,7 +18,8 @@ class PaddleOCREngine(OCREngine):
             # v2.8+ does not accept use_mkldnn
             self.engine = PaddleOCR(
                 use_angle_cls=False,
-                lang=settings.OCR_LANG
+                lang=settings.OCR_LANG,
+                ocr_version="PP-OCRv3"
             )
         except ImportError:
             # v2.7
@@ -26,7 +27,8 @@ class PaddleOCREngine(OCREngine):
                 use_angle_cls=False,
                 lang=settings.OCR_LANG,
                 show_log=False,
-                use_mkldnn=False
+                use_mkldnn=False,
+                ocr_version="PP-OCRv3"
             )
 
     def extract_text(self, page_data: PageData) -> PageData:

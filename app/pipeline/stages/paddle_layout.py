@@ -7,7 +7,7 @@ import numpy as np
 try:
     from paddleocr import PPStructure
     LAYOUT_CLASS = PPStructure
-    KWARGS = {"show_log": False, "use_mkldnn": False, "recovery": False}
+    KWARGS = {"show_log": False, "use_mkldnn": False, "recovery": False, "ocr_version": "PP-OCRv3"}
 except ImportError:
     from paddleocr import PPStructureV3
     LAYOUT_CLASS = PPStructureV3
@@ -18,7 +18,8 @@ except ImportError:
         "use_formula_recognition": False,
         "use_chart_recognition": False,
         "use_table_recognition": False,
-        "use_doc_unwarping": False
+        "use_doc_unwarping": False,
+        "ocr_version": "PP-OCRv3"
     }
 
 from app.pipeline.interfaces.layout_engine import LayoutEngine
