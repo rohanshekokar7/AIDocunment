@@ -102,12 +102,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.detail || 'An error occurred during classification.');
+                throw new Error(data.detail || 'An error occurred while queueing.');
             }
 
-            displayResults(data);
+            // Start polling the status endpoint
+            pollStatus(data.job_id);
         } catch (error) {
             console.error('Error:', error);
+            showError(error.message);
+        }
+    }
+
+    async function pollStatus(jobId) {
+        try {
+            const response = await fetch(`/api/v1/status/${jobId}`);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.detail || 'Failed to check job status.');
+            }
+            
+            if (data.status === 'completed') {
+                displayResults(data.result);
+            } else if (data.status === 'error') {
+                showError(data.error || 'An error occurred during processing.');
+            } else {
+                // Still processing, poll again in 5 seconds
+                setTimeout(() => pollStatus(jobId), 5000);
+            }
+        } catch (error) {
+            console.error('Polling Error:', error);
             showError(error.message);
         }
     }

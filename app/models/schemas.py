@@ -22,3 +22,19 @@ class BatchClassificationResponse(BaseModel):
     """
     results: List[ClassificationResponse] = Field(..., description="List of individual classification results")
     total_processing_time: float = Field(..., description="Total time taken to process the batch")
+
+class JobResponse(BaseModel):
+    """
+    Immediate response when a job is queued.
+    """
+    job_id: str = Field(..., description="Unique ID for the background job")
+    status: str = Field("processing", description="Current status of the job")
+
+class JobStatusResponse(BaseModel):
+    """
+    Response when checking the status of a job.
+    """
+    job_id: str = Field(..., description="Unique ID for the background job")
+    status: str = Field(..., description="Status: processing, completed, or error")
+    result: Optional[ClassificationResponse] = Field(None, description="The result if the job is completed")
+    error: Optional[str] = Field(None, description="Error message if the job failed")

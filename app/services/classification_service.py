@@ -6,11 +6,12 @@ Developed by Rohan Shekokar
 import time
 import os
 import traceback
+import uuid
 from fastapi import UploadFile, HTTPException
-from typing import List
+from typing import List, Dict, Any
 
 from app.core.logging import logger
-from app.models.schemas import ClassificationResponse, BatchClassificationResponse
+from app.models.schemas import ClassificationResponse, BatchClassificationResponse, JobResponse, JobStatusResponse
 from app.utils.file_utils import save_upload_file_tmp
 
 # Pipeline imports
@@ -47,43 +48,37 @@ pipeline = PipelineOrchestrator(
     confidence_estimator=HeuristicConfidenceEstimator()
 )
 
-async def classify_document(upload_file: UploadFile, all_pages: bool = False) -> ClassificationResponse:
+# Global in-memory job store
+jobs: Dict[str, Dict[str, Any]] = {}
+
+def process_job_background(job_id: str, tmp_path: str, filename: str, all_pages: bool):
     """
-    Orchestrates the classification of a single document using the modular pipeline.
+    Executes the heavy pipeline process in a background thread.
     """
     start_time = time.time()
-    tmp_path = None
-    
     try:
-        logger.info(f"Processing classification for file: {upload_file.filename}")
-        tmp_path = save_upload_file_tmp(upload_file)
+        logger.info(f"Background job {job_id} started for file: {filename}")
         
-        import asyncio
-        # Execute the modular pipeline in a background thread so we don't block FastAPI's event loop
-        result = await asyncio.to_thread(pipeline.process, tmp_path, upload_file.filename, all_pages)
+        # Pipeline process is synchronous, so it will block this background thread,
+        # which is exactly what we want in FastAPI BackgroundTasks.
+        result = pipeline.process(tmp_path, filename, all_pages)
         
         processing_time = round(time.time() - start_time, 2)
-        
         response = ClassificationResponse(
             document_type=result.document_type,
             writing_type=result.writing_type,
             confidence=result.confidence,
             processing_time=processing_time
         )
-        logger.info(f"Classified {upload_file.filename} as '{response.document_type}' (Confidence: {response.confidence}) in {processing_time}s")
-        return response
         
-    except HTTPException:
-        raise
-    except ValueError as ve:
-        logger.error(f"Value Error: {ve}")
-        raise HTTPException(status_code=500, detail=f"Pipeline error: {str(ve)}")
-    except RuntimeError as re:
-        logger.error(f"Runtime Error: {re}")
-        raise HTTPException(status_code=500, detail=f"Pipeline inference failed: {str(re)}")
+        jobs[job_id]["status"] = "completed"
+        jobs[job_id]["result"] = response
+        logger.info(f"Background job {job_id} completed. Classified as '{response.document_type}' in {processing_time}s")
+        
     except Exception as e:
-        logger.error(f"Unhandled error classifying document: {traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail="Internal server error during classification")
+        logger.error(f"Background job {job_id} failed: {traceback.format_exc()}")
+        jobs[job_id]["status"] = "error"
+        jobs[job_id]["error"] = "Internal server error during classification"
     finally:
         if tmp_path and os.path.exists(tmp_path):
             try:
@@ -91,33 +86,27 @@ async def classify_document(upload_file: UploadFile, all_pages: bool = False) ->
             except Exception as cleanup_err:
                 logger.warning(f"Failed to delete tmp file {tmp_path}: {cleanup_err}")
 
-async def batch_classify_documents(files: List[UploadFile], all_pages: bool = False) -> BatchClassificationResponse:
+def queue_classification_job(upload_file: UploadFile, all_pages: bool = False) -> tuple[str, str, str]:
     """
-    Processes multiple documents sequentially.
+    Saves the file to disk and prepares a background job.
+    Returns (job_id, tmp_path, filename).
     """
-    start_time = time.time()
-    results = []
-    
-    for file in files:
-        try:
-            res = await classify_document(file, all_pages)
-            results.append(res)
-        except HTTPException as http_exc:
-            logger.error(f"Batch processing HTTP error for {file.filename}: {http_exc.detail}")
-            results.append(ClassificationResponse(
-                document_type="Error",
-                writing_type="Error",
-                confidence=0.0,
-                processing_time=0.0
-            ))
-        except Exception as e:
-            logger.error(f"Error in batch for {file.filename}: {str(e)}")
-            results.append(ClassificationResponse(
-                document_type="Error",
-                writing_type="Error",
-                confidence=0.0,
-                processing_time=0.0
-            ))
-            
-    total_time = round(time.time() - start_time, 2)
-    return BatchClassificationResponse(results=results, total_processing_time=total_time)
+    try:
+        tmp_path = save_upload_file_tmp(upload_file)
+        job_id = str(uuid.uuid4())
+        jobs[job_id] = {
+            "status": "processing",
+            "result": None,
+            "error": None
+        }
+        return job_id, tmp_path, upload_file.filename
+    except Exception as e:
+        logger.error(f"Error queueing job: {e}")
+        raise HTTPException(status_code=500, detail="Failed to queue document processing")
+
+async def batch_classify_documents(files: List[UploadFile], all_pages: bool = False):
+    """
+    Batch processing is temporarily disabled for background job architecture.
+    Could be implemented by queueing multiple jobs.
+    """
+    raise HTTPException(status_code=501, detail="Batch classification is currently unsupported with the background polling architecture.")
