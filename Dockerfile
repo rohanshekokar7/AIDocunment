@@ -33,6 +33,7 @@ RUN mkdir -p uploads
 COPY --chown=user ./app ./app
 COPY --chown=user ./tests ./tests
 COPY --chown=user ./static ./static
+COPY --chown=user ./worker.py ./worker.py
 
 # Hugging Face routes traffic to port 7860
 EXPOSE 7860
