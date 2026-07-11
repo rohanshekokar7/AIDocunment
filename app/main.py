@@ -20,7 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 from app.api.routes import router
 from app.core.config import settings
 from app.core.logging import logger
-from app.services.classification_service import pipeline
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -64,6 +63,5 @@ def read_root():
 def health_check():
     return {
         "status": "healthy",
-        "slm_loaded": pipeline.slm_engine.model is not None,
-        "device": getattr(pipeline.slm_engine, "device", None)
+        "mode": "async_worker"
     }
