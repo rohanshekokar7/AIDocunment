@@ -4,14 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingState = document.getElementById('loading-state');
     const resultCard = document.getElementById('result-card');
     const errorCard = document.getElementById('error-card');
-    
+
     // Result elements
     const docTypeEl = document.getElementById('res-doc-type');
     const writingTypeEl = document.getElementById('res-writing-type');
     const confidenceBar = document.getElementById('res-confidence-bar');
     const confidenceText = document.getElementById('res-confidence-text');
     const processingTimeEl = document.getElementById('res-processing-time');
-    
+
     // Buttons
     const resetBtn = document.getElementById('reset-btn');
     const errorResetBtn = document.getElementById('error-reset-btn');
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    fileInput.addEventListener('change', function() {
+    fileInput.addEventListener('change', function () {
         if (this.files.length > 0) {
             handleFile(this.files[0]);
         }
@@ -116,11 +116,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/api/v1/status/${jobId}`);
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.detail || 'Failed to check job status.');
             }
-            
+
             if (data.status === 'completed') {
                 displayResults(data.result);
             } else if (data.status === 'error') {
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (languageEl) {
             languageEl.textContent = data.language || 'Unknown';
         }
-        
+
         const summaryEl = document.getElementById('res-summary');
         if (summaryEl) {
             summaryEl.textContent = data.summary || 'No details extracted.';
@@ -157,17 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const confidencePercent = Math.round(data.confidence * 100);
         setTimeout(() => {
             confidenceBar.style.width = `${confidencePercent}%`;
-            
+
             // Color coding based on confidence
-            if(confidencePercent > 80) {
+            if (confidencePercent > 80) {
                 confidenceBar.style.background = 'linear-gradient(90deg, #6366f1, #10b981)';
-            } else if(confidencePercent > 50) {
+            } else if (confidencePercent > 50) {
                 confidenceBar.style.background = 'linear-gradient(90deg, #6366f1, #f59e0b)';
             } else {
                 confidenceBar.style.background = 'linear-gradient(90deg, #6366f1, #ef4444)';
             }
         }, 100); // Slight delay to ensure CSS transition triggers
-        
+
         confidenceText.textContent = `${confidencePercent}%`;
     }
 

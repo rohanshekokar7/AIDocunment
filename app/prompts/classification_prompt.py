@@ -43,12 +43,32 @@ Document Content (JSON format with pages and text blocks):
 
 You MUST return ONLY a valid JSON object. Do not include any markdown formatting, explanations, or code blocks. Just the raw JSON string.
 
-Example output:
+Here are some examples of the expected JSON output format and reasoning:
+
+Example 1 (Standard Document):
 {{
     "summary": "Found 'Permanent Account Number' and 'INCOME TAX DEPARTMENT'. Name is Rohan. Therefore this is a PAN Card.",
     "document_type": "PAN Card",
     "writing_type": "Printed",
     "language": "English",
     "confidence": 0.98
+}}
+
+Example 2 (Joining Letter with Salary - NOT an Invoice):
+{{
+    "summary": "Found 'Dear Rohan', 'Date of Joining', 'Compensation', and company letterhead. Even though it mentions salary/money numbers, it is an employment document and clearly a Joining Letter.",
+    "document_type": "Joining Letter",
+    "writing_type": "Printed",
+    "language": "English",
+    "confidence": 0.95
+}}
+
+Example 3 (Form with Handwritten Notes):
+{{
+    "summary": "Found printed text 'Patient Name: Rohan, Pathology Lab' alongside messy handwritten notes for 'Blood Pressure 120/80'. Since it contains both printed form text and handwritten doctor notes, it is Mixed.",
+    "document_type": "Medical Report",
+    "writing_type": "Mixed",
+    "language": "English",
+    "confidence": 0.92
 }}
 """
