@@ -37,4 +37,6 @@ class DocumentContext:
 class ClassificationResult:
     document_type: str
     writing_type: str
+    language: str
+    summary: str
     confidence: float

@@ -57,6 +57,11 @@
                         <span class="value" id="res-writing-type">-</span>
                     </div>
 
+                    <div class="result-item">
+                        <span class="label">Language</span>
+                        <span class="value" id="res-language">-</span>
+                    </div>
+
                     <div class="result-item full-width">
                         <span class="label">Confidence Score</span>
                         <div class="progress-bar-container">
@@ -71,7 +76,12 @@
                     </div>
                 </div>
 
-                <button class="reset-btn" id="reset-btn">Analyze Another Document</button>
+                <div class="summary-section" style="margin-top: 1.5rem; padding: 1rem; background: rgba(99, 102, 241, 0.05); border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                    <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--text-color);">Extracted Details & Reasoning</h3>
+                    <p id="res-summary" style="font-size: 0.9rem; line-height: 1.5; color: var(--light-text);">-</p>
+                </div>
+
+                <button class="reset-btn" id="reset-btn" style="margin-top: 1.5rem;">Analyze Another Document</button>
             </div>
 
             <div class="error-card hidden" id="error-card">
@@ -86,7 +96,7 @@
         </main>
     </div>
 
-    <script src="/static/script.js?v=2"></script>
+    <script src="/static/script.js?v=4"></script>
 </body>
 
 </html>

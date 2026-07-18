@@ -142,6 +142,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         docTypeEl.textContent = data.document_type;
         writingTypeEl.textContent = data.writing_type;
+        const languageEl = document.getElementById('res-language');
+        if (languageEl) {
+            languageEl.textContent = data.language || 'Unknown';
+        }
+        
+        const summaryEl = document.getElementById('res-summary');
+        if (summaryEl) {
+            summaryEl.textContent = data.summary || 'No details extracted.';
+        }
+
         processingTimeEl.textContent = `${data.processing_time}s`;
 
         // Animate confidence bar

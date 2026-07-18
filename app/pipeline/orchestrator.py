@@ -86,5 +86,7 @@ class PipelineOrchestrator:
         return ClassificationResult(
             document_type=slm_out.get("document_type", "Other / Unknown"),
             writing_type=slm_out.get("writing_type", "Unknown"),
+            language=slm_out.get("language", "Unknown"),
+            summary=slm_out.get("summary", "No details extracted."),
             confidence=final_conf
         )

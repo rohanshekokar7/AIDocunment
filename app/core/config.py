@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     
     # AI configuration
     SLM_MODEL_NAME: str = "Qwen/Qwen2.5-0.5B-Instruct"
+    EXTERNAL_LLM_API_URL: str = "http://localhost:8080/generate" # Default dummy URL
+    EXTERNAL_LLM_API_KEY: str = ""
+    EXTERNAL_LLM_MODEL_NAME: str = "Gemma 4 E4V" # Default model
     OCR_LANG: str = "en"
     USE_GPU_IF_AVAILABLE: bool = True
     

@@ -13,6 +13,8 @@ class ClassificationResponse(BaseModel):
     """
     document_type: str = Field(..., description="The classified type of the document")
     writing_type: str = Field(..., description="Printed, Handwritten, or Mixed")
+    language: str = Field(..., description="The primary language of the document")
+    summary: str = Field(..., description="Key details extracted from the document")
     confidence: float = Field(..., description="Confidence score from 0.0 to 1.0")
     processing_time: float = Field(..., description="Time taken to process the document in seconds")
 

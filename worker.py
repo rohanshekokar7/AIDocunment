@@ -35,7 +35,7 @@ def main():
         from app.pipeline.stages.paddle_ocr import PaddleOCREngine
         from app.pipeline.stages.paddle_layout import PaddleLayoutEngine
         from app.pipeline.stages.json_aggregator import JSONAggregator
-        from app.pipeline.stages.transformers_slm import TransformersSLMEngine
+        from app.pipeline.stages.api_slm import APISLMEngine
         from app.pipeline.stages.heuristic_confidence import HeuristicConfidenceEstimator
         from app.pipeline.orchestrator import PipelineOrchestrator
         
@@ -53,7 +53,7 @@ def main():
             ocr_engine=PaddleOCREngine(),
             layout_engine=PaddleLayoutEngine(),
             aggregator=JSONAggregator(),
-            slm_engine=TransformersSLMEngine(),
+            slm_engine=APISLMEngine(),
             confidence_estimator=HeuristicConfidenceEstimator()
         )
         
@@ -69,6 +69,8 @@ def main():
             "result": {
                 "document_type": result.document_type,
                 "writing_type": result.writing_type,
+                "language": result.language,
+                "summary": result.summary,
                 "confidence": result.confidence,
                 "processing_time": processing_time
             },
