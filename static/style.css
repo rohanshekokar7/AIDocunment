@@ -124,7 +124,7 @@ header p {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
-    border-radius: 1.5rem;
+    border-radius: 0; /* Sharp edges */
     padding: 1.5rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease;
@@ -221,7 +221,7 @@ header p {
     flex-direction: column;
     background: rgba(248, 250, 252, 0.9);
     padding: 1rem;
-    border-radius: 1rem;
+    border-radius: 0; /* Sharp edges */
     border: 1px solid rgba(147, 51, 234, 0.1);
     transition: all 0.3s ease;
 }
@@ -286,7 +286,7 @@ header p {
     background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 0.75rem;
+    border-radius: 0; /* Sharp edges */
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
