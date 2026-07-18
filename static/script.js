@@ -91,10 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('all_pages', 'false');
 
         try {
-            const response = await fetch('/api/v1/classify', {
+            const response = await fetch('/api/v1/classify?all_pages=false', {
                 method: 'POST',
                 body: formData
             });
