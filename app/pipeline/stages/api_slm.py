@@ -20,7 +20,13 @@ class APISLMEngine(SLMEngine):
     def classify(self, document_context: DocumentContext) -> dict:
         if not self.api_url or not self.api_key:
             logger.error("API URL or API Key is missing in settings.")
-            return {"document_type": "Other / Unknown", "writing_type": "Unknown", "confidence": 0.0}
+            return {
+                "document_type": "Other / Unknown", 
+                "writing_type": "Unknown", 
+                "language": "Unknown",
+                "summary": "ERROR: EXTERNAL_LLM_API_KEY is missing. Please add it to Hugging Face Spaces Secrets and rebuild the space.",
+                "confidence": 0.0
+            }
 
         prompt = build_classification_prompt(document_context.aggregated_text)
         
@@ -85,9 +91,18 @@ class APISLMEngine(SLMEngine):
             
         except httpx.HTTPStatusError as e:
             logger.error(f"HTTP Error from External API: {e.response.status_code} - {e.response.text}")
+            error_msg = f"API Connection Error: HTTP {e.response.status_code}"
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse JSON from External API response: {e}\nRaw Output: {output_text}")
+            error_msg = "API returned invalid JSON."
         except Exception as e:
             logger.error(f"Unexpected error calling External API: {e}")
+            error_msg = f"Unexpected Error: {str(e)}"
             
-        return {"document_type": "Other / Unknown", "writing_type": "Unknown", "confidence": 0.0}
+        return {
+            "document_type": "Other / Unknown", 
+            "writing_type": "Unknown", 
+            "language": "Unknown",
+            "summary": error_msg,
+            "confidence": 0.0
+        }
