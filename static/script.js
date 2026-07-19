@@ -93,7 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('/api/v1/classify?all_pages=false', {
+            // Get selected approach
+            const approach = document.querySelector('input[name="approach"]:checked').value;
+            
+            const response = await fetch(`/api/v1/classify?all_pages=false&approach=${approach}`, {
                 method: 'POST',
                 body: formData
             });
