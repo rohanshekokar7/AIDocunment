@@ -3,7 +3,7 @@ AI Document Classification System
 Developed by Rohan Shekokar
 """
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import numpy as np
 from PIL import Image
 
@@ -25,7 +25,7 @@ class AdvancedPreprocessor(ImagePreprocessor):
         else:
             self.filters = filters
 
-    def process(self, file_path: str, all_pages: bool) -> List[Image.Image]:
+    def process(self, file_path: str, all_pages: bool) -> Tuple[List[Image.Image], List[Image.Image]]:
         ext = file_path.split(".")[-1].lower()
         
         # Load raw PIL images using existing utilities
@@ -59,4 +59,4 @@ class AdvancedPreprocessor(ImagePreprocessor):
                 
             processed_images.append(final_pil)
             
-        return processed_images
+        return raw_images, processed_images

@@ -24,6 +24,7 @@ class LayoutRegion:
 class PageData:
     page_number: int
     image: Image.Image
+    original_image: Optional[Image.Image] = None
     raw_text_blocks: List[TextBlock] = field(default_factory=list)
     layout_regions: List[LayoutRegion] = field(default_factory=list)
 

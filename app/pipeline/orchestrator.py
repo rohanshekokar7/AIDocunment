@@ -37,7 +37,7 @@ class PipelineOrchestrator:
         self.rule_engine = rule_engine
         self.confidence_estimator = confidence_estimator
 
-    def process(self, file_path: str, filename: str, all_pages: bool = False, approach: str = "llm") -> ClassificationResult:
+    def process(self, file_path: str, filename: str, all_pages: bool = False, doc_category: str = "auto") -> ClassificationResult:
         from app.core.logging import logger
         
         # 1. Validate
@@ -46,7 +46,7 @@ class PipelineOrchestrator:
         
         # 2. Preprocess
         logger.info("Pipeline Step 2: Preprocessing document (PDF to Images)...")
-        images = self.preprocessor.process(file_path, all_pages)
+        raw_images, images = self.preprocessor.process(file_path, all_pages)
         logger.info(f"Generated {len(images)} page images.")
         
         # Initialize context
@@ -54,15 +54,18 @@ class PipelineOrchestrator:
         
         for i, img in enumerate(images):
             logger.info(f"Processing Page {i+1}/{len(images)}...")
-            page_data = PageData(page_number=i+1, image=img)
+            page_data = PageData(page_number=i+1, image=img, original_image=raw_images[i])
             
             # 3. OCR
             logger.info(f"Page {i+1}: Running OCR...")
             page_data = self.ocr_engine.extract_text(page_data)
             
             # 4. Layout
-            logger.info(f"Page {i+1}: Running Layout Detection...")
-            page_data = self.layout_engine.detect_layout(page_data)
+            if doc_category != "plain_text":
+                logger.info(f"Page {i+1}: Running Layout Detection...")
+                page_data = self.layout_engine.detect_layout(page_data)
+            else:
+                logger.info(f"Page {i+1}: Skipping Layout Detection for {doc_category}...")
             
             doc_context.pages.append(page_data)
             
@@ -70,19 +73,21 @@ class PipelineOrchestrator:
         logger.info("Pipeline Step 5: Aggregating features...")
         doc_context = self.aggregator.aggregate(doc_context)
         
-        if approach == "rule":
-            # Rule-Based Path
+        # 6. SLM / Rules Engine Inference
+        if doc_category == "plain_text":
             logger.info("Pipeline Step 6: Running Rule-Based Inference...")
             classification_out = self.rule_engine.classify(doc_context)
         else:
-            # LLM-Based Path
-            # 6. SLM Inference
             logger.info("Pipeline Step 6: Running SLM Inference (This may take a while)...")
             classification_out = self.slm_engine.classify(doc_context)
             
-        # 6.5 Vision Engine Inference for Writing Type (Run for both approaches)
-        logger.info("Pipeline Step 6.5: Running Vision Engine for writing type detection...")
-        writing_type_out = self.vision_engine.detect_writing_type(doc_context)
+        # 6.5 Vision Engine Inference for Writing Type
+        if doc_category in ["handwritten", "mixed", "auto"]:
+            logger.info("Pipeline Step 6.5: Running Vision Engine for writing type detection...")
+            writing_type_out = self.vision_engine.detect_writing_type(doc_context)
+        else:
+            logger.info(f"Pipeline Step 6.5: Skipping Vision Engine for {doc_category}, defaulting to Typed...")
+            writing_type_out = "Typed"
         
         # 7. Confidence Estimation
         logger.info("Pipeline Step 7: Estimating confidence...")

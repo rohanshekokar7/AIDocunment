@@ -33,7 +33,7 @@ def get_job_status(job_id: str) -> dict:
             return {"status": "processing", "result": None, "error": None}
     return None
 
-def queue_classification_job(upload_file: UploadFile, all_pages: bool = False, approach: str = "llm") -> tuple[str, str, str]:
+def queue_classification_job(upload_file: UploadFile, all_pages: bool = False, doc_category: str = "auto") -> tuple[str, str, str]:
     """
     Saves the file to disk and spawns a background OS process to process it.
     Returns (job_id, tmp_path, filename).
@@ -56,7 +56,7 @@ def queue_classification_job(upload_file: UploadFile, all_pages: bool = False, a
             tmp_path,
             upload_file.filename,
             str(all_pages),
-            approach
+            doc_category
         ]
         
         # We don't wait for it to finish, it runs detached in the background

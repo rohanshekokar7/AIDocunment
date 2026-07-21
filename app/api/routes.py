@@ -15,13 +15,13 @@ router = APIRouter()
 async def classify_endpoint(
     file: UploadFile = File(..., description="The document image or PDF to classify"),
     all_pages: bool = Query(False, description="If true, processes all pages of a PDF"),
-    approach: str = Query("llm", description="The classification approach: 'llm' or 'rule'")
+    doc_category: str = Query("auto", description="The document category: 'plain_text', 'handwritten', 'mixed', or 'auto'")
 ):
     """
     Queues a single uploaded document for classification.
     Returns a job_id to poll for status.
     """
-    job_id, tmp_path, filename = queue_classification_job(file, all_pages, approach)
+    job_id, tmp_path, filename = queue_classification_job(file, all_pages, doc_category)
     return JobResponse(job_id=job_id, status="processing")
 
 @router.get("/status/{job_id}", response_model=JobStatusResponse)

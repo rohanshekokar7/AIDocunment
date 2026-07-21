@@ -11,14 +11,14 @@ import traceback
 
 def main():
     if len(sys.argv) < 5:
-        print("Usage: python worker.py <job_id> <tmp_path> <filename> <all_pages> [approach]")
+        print("Usage: python worker.py <job_id> <tmp_path> <filename> <all_pages> [doc_category]")
         sys.exit(1)
         
     job_id = sys.argv[1]
     tmp_path = sys.argv[2]
     filename = sys.argv[3]
     all_pages = sys.argv[4].lower() == 'true'
-    approach = sys.argv[5] if len(sys.argv) > 5 else "llm"
+    doc_category = sys.argv[5] if len(sys.argv) > 5 else "auto"
     
     job_file = f"/tmp/job_{job_id}.json"
     
@@ -37,7 +37,7 @@ def main():
         from app.pipeline.stages.paddle_layout import PaddleLayoutEngine
         from app.pipeline.stages.json_aggregator import JSONAggregator
         from app.pipeline.stages.api_slm import APISLMEngine
-        from app.pipeline.stages.api_vision import APIVisionEngine
+        from app.pipeline.stages.local_vision import LocalVisionEngine
         from app.pipeline.stages.rule_based_engine import RuleBasedEngine
         from app.pipeline.stages.heuristic_confidence import HeuristicConfidenceEstimator
         from app.pipeline.orchestrator import PipelineOrchestrator
@@ -57,7 +57,7 @@ def main():
             layout_engine=PaddleLayoutEngine(),
             aggregator=JSONAggregator(),
             slm_engine=APISLMEngine(),
-            vision_engine=APIVisionEngine(),
+            vision_engine=LocalVisionEngine(),
             rule_engine=RuleBasedEngine(),
             confidence_estimator=HeuristicConfidenceEstimator()
         )
@@ -65,7 +65,7 @@ def main():
         start_time = time.time()
         
         # Process the document
-        result = pipeline.process(tmp_path, filename, all_pages, approach)
+        result = pipeline.process(tmp_path, filename, all_pages, doc_category)
         processing_time = round(time.time() - start_time, 2)
         
         # Save success result
